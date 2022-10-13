@@ -1,0 +1,11 @@
+torch==1.12.1
+--extra-index-url https://download.pytorch.org/whl/cu113
+torchvision==0.13.1
+--extra-index-url https://download.pytorch.org/whl/cu113
+transformers==4.15.0
+diffusers==v0.4.2
+#transformers==4.22.0 for training
+timm==0.4.12
+fairscale==0.4.4
+datasets==2.4.0
+accelerate==0.13.1
