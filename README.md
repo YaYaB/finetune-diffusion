@@ -7,15 +7,29 @@ This task can be split into three main steps:
 - Captioning
 - Finetuning
 
+Here are some examples of what you can get after finetuning (on Magic cards and on One piece characters)
+
+Prompt | Image (magic finetuned) | Image (one piece finetuned)
+--- | --- | ---
+Elon Musk | <img src="./examples/magic/Elon_Musk.png" alt="" width="200"/> | <img src="./examples/onepiece/Elon_Musk.png" alt="" width="200"/>
+Harry Potter | <img src="./examples/magic/Harry_Potter.png" alt="" width="200"/> | <img src="./examples/onepiece/Harry_Potter.png" alt="" width="200"/>
+Yoda | <img src="./examples/magic/Yoda.png" alt="" width="200"/> | <img src="./examples/onepiece/Yoda.png" alt="" width="200"/>
+Obama | <img src="./examples/magic/Obama.png" alt="" width="200"/> | <img src="./examples/onepiece/Obama.png" alt="" width="200"/>
+Zeus | <img src="./examples/magic/Zeus.png" alt="" width="200"/> | <img src="./examples/onepiece/Zeus.png" alt="" width="200"/>
+Flying dog | <img src="./examples/magic/flying_dog.png" alt="" width="200"/> | <img src="./examples/onepiece/flying_dog.png" alt="" width="200"/>
+Monster with three eyes on a bike | <img src="./examples/magic/Monster_three_eyes_on_bike.png" alt="" width="200"/> | <img src="./examples/onepiece/Monster_three_eyes_on_bike.png" alt="" width="200"/>
+A mountain with rocks | <img src="./examples/magic/a_mountain_with_rocks.png" alt="" width="200"/> | <img src="./examples/onepiece/a_mountain_with_rocks.png" alt="" width="200"/>
+
+
 ## Requirements
 
 - **Hardware**
-    - To launch the finetuning with a batch_size of 1 you'll need to have a gpu with at least 24G VRAM (you can use accumulating gradient to simulate higher batch size)
-    - Make sure that you have disk space, the model uses ~8Gb
+    - To launch the finetuning with a batch_size of 1 you need to have a gpu with at least 24G VRAM (you can use accumulating gradient to simulate higher batch size)
+    - Make sure that you have enough disk space, the model uses ~11Gb
 
 - **Software**
     - A HuggingFace account is necessary to upload datasets and models
-        - Click on Acces the repository of https://huggingface.co/CompVis/stable-diffusion-v1-4 while being logged in
+        - Click on Access the repository of https://huggingface.co/CompVis/stable-diffusion-v1-4 while being logged in
         - Authenticate to HuggingFace 
         ```bash
         huggingface-cli login
@@ -30,7 +44,7 @@ This task can be split into three main steps:
 - **Other**
     - BLIP requires transformers==4.15.0
     - Finetuning requires transformers==4.22.0
-    - You'll see when launching one of this the reinstall of transformers
+    - Based on the script launched (captioning or finetuning) it will automatically install the correct version of transformers
 - **Requirements**
 ```bash
 pip install -r requirements.txt
@@ -38,8 +52,8 @@ pip install -r requirements.txt
 
 
 ## Data retrieval
-You'll need to collect all the images on which you want to finetune. All of those images must be put in the `./data` folder.
-Those images will be converted to `.jpeg` later in the process. Having around 1K diverse images is a good magnitude for finetuning you want to finetune.
+You need to collect all the images on which you want to finetune. All of those images must be put in the `./data` folder.
+Those images will be converted to `.jpeg` later in the process. Having around 1K diverse images is good magnitude to get interesting results after finetuning.
 
 
 
@@ -113,8 +127,8 @@ as `README.md` in your dataset repository.
 
 
 ## Finetuning
-The script is mainly inspired from [this](https://github.com/huggingface/diffusers/tree/main/examples/text_to_image), it was modified before
-this script was merge to diffusers.
+The script is mainly inspired from [Diffuser finetuning script](https://github.com/huggingface/diffusers/tree/main/examples/text_to_image), it was modified before
+this script was merged to diffusers. I may create an MR on diffusers to add new features for the finetuning.
 
 As said before the finetuning requires a GPU with at least 24GB of VRAM. Moreover it can overfits quite easily.
 It is advised to follow the finetuning at every epoch and stop when overfitting is observed.
@@ -190,13 +204,12 @@ You can then launch the following script:
 
 After each epoch all the input txt in `finetuning_validation.txt` are used to generate images, those images will be available in a specific folder `./data/results/INPUT_TEXT` by input text allowing you to observe the evolution.
 
-For the moment the model is uploaded to huggingface hub every te
-
+The model is uploaded every 5 epochs to your model repository in huggingFace hub, this can be modified through the paramter **--upload_every_epoch**
 
 ## Inference
 
 ### Locally
-Your model is also outputted locally in `output_dir` defined before. You can load it and test it using the following script.
+Your model is also stored locally in `output_dir` defined before. You can load it and test it using the following script.
 
 ```python
 from diffusers import StableDiffusionPipeline
@@ -231,6 +244,8 @@ image.save("yoda-pokemon.png")
 It is then possible to create a space for testing directly on HuggingFace, you can copy paste the spaces of those two examples for instance and modify
 the path of the model :)
 
+Sorry for the latency (several minutes), I may update my HuggingFace account to get a gpu for inference.
+
 ### Text to One piece
 A diffusion model finetuned on images of all characters from One piece.
 - [Model](https://huggingface.co/YaYaB/sd-onepiece-diffusers-test)
@@ -240,20 +255,6 @@ A diffusion model finetuned on images of all characters from One piece.
 A diffusion model finetuned on images of all Creature type from Magic card
 - [Model](https://huggingface.co/YaYaB/sd-magic-diffusers-test2)
 - [Space demo](https://huggingface.co/spaces/YaYaB/text-to-magic)
-
-### Results
-The results obtained using those two diffusion models for some prompts
-
-Prompt | Image (magic finetuned) | Image (one piece finetuned)
---- | --- | ---
-Elon Musk | <img src="./examples/magic/Elon_Musk.png" alt="" width="200"/> | <img src="./examples/onepiece/Elon_Musk.png" alt="" width="200"/>
-Harry Potter | <img src="./examples/magic/Harry_Potter.png" alt="" width="200"/> | <img src="./examples/onepiece/Harry_Potter.png" alt="" width="200"/>
-Yoda | <img src="./examples/magic/Yoda.png" alt="" width="200"/> | <img src="./examples/onepiece/Yoda.png" alt="" width="200"/>
-Obama | <img src="./examples/magic/Obama.png" alt="" width="200"/> | <img src="./examples/onepiece/Obama.png" alt="" width="200"/>
-Zeus | <img src="./examples/magic/Zeus.png" alt="" width="200"/> | <img src="./examples/onepiece/Zeus.png" alt="" width="200"/>
-Flying dog | <img src="./examples/magic/flying_dog.png" alt="" width="200"/> | <img src="./examples/onepiece/flying_dog.png" alt="" width="200"/>
-Monster with three eyes on a bike | <img src="./examples/magic/Monster_three_eyes_on_bike.png" alt="" width="200"/> | <img src="./examples/onepiece/Monster_three_eyes_on_bike.png" alt="" width="200"/>
-A mountain with rocks | <img src="./examples/magic/a_mountain_with_rocks.png" alt="" width="200"/> | <img src="./examples/onepiece/a_mountain_with_rocks.png" alt="" width="200"/>
 
 
 ## Acknowledgements
